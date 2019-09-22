@@ -1,17 +1,33 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+    <component :is="currentPage" :person="currentPerson" />
   </div>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
+import PeopleTable from "./components/PeopleTable.vue";
+import PeopleForm from "./components/PeopleForm.vue";
+import { mapState } from "vuex";
 
 export default {
   name: "app",
+  computed: {
+    ...mapState(["currentPage", "currentPerson"])
+  },
+  methods: {
+    loadPeople(loadData) {
+      this.$store.dispatch("loadPeople", { loadData });
+    }
+  },
+  mounted() {
+    const people = localStorage.getItem("people");
+    if (people) {
+      this.loadPeople(JSON.parse(people));
+    }
+  },
   components: {
-    HelloWorld
+    PeopleTable,
+    PeopleForm
   }
 };
 </script>
@@ -19,9 +35,8 @@ export default {
 <style>
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
+  display: flex;
+  justify-content: center;
   color: #2c3e50;
   margin-top: 60px;
 }
